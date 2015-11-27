@@ -1,0 +1,34 @@
+
+<html>
+<head>
+<script>
+var ws = new WebSocket('ws://localhost:8001/msg');
+
+ws.onmessage = function(event) {
+    var table = document.getElementById('message');
+    var data = eval('(' + event.data + ')');
+    ({
+        'info': function() {
+            var cell = table.insertRow().insertCell();
+            cell.colSpan = 3;
+            cell.innerHTML = data['message'];
+        },
+        'user': function() {
+            var row = table.insertRow();
+            row.insertCell().innerHTML = data['id'];
+            row.insertCell().innerHTML = data['message'];
+        },
+    }[data['type']])();
+};
+
+function send() {
+    ws.send(document.getElementById('msg').value);
+    document.getElementById('msg').value = '';
+}
+
+</script>
+</head>
+<body>
+<input id='msg'><button onclick='send()'>Send</button>
+<table id='message' border='0'></table>
+
